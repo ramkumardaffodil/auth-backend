@@ -1,14 +1,14 @@
 import validator from "validator";
-import User from "../../models/User.model.js";
+import User from "../../models/User.js";
 import { createToken } from "../../utils/token.js";
 
 class authController {
   async signUp(req, res) {
     const { email, password } = req.body;
     if (!email || !validator.isEmail(email))
-      return res.json({ data: "Email is not valid" });
+      return res.json({ error: "Email is not valid" });
     if (!password || password.length < 6)
-      return res.json({ data: "Password is not valid" });
+      return res.json({ error: "Password is not valid" });
     try {
       const user = await User.create({ email, password });
       const accessToken = createToken(
@@ -18,9 +18,16 @@ class authController {
       );
       return res
         .status(200)
-        .json({ data: user._id, accessToken, refreshToken: user.refreshToken });
+        .json({
+          userId: user._id,
+          accessToken,
+          refreshToken: user.refreshToken,
+        });
     } catch (error) {
       console.log("error while sign up is : ", error);
+      if (error?.code === 11000) {
+        return res.status(400).json({ error: "Email already present" });
+      }
       return res.status(400).json(error);
     }
   }
@@ -28,9 +35,9 @@ class authController {
   async signIn(req, res) {
     const { email, password } = req.body;
     if (!email || !validator.isEmail(email))
-      return res.json({ data: "Email is not valid" });
+      return res.json({ error: "Email is not valid" });
     if (!password || password.length < 6)
-      return res.json({ data: "Password is not valid" });
+      return res.json({ error: "Password is not valid" });
     try {
       const user = await User.login(email, password);
       const accessToken = createToken(
@@ -39,7 +46,7 @@ class authController {
         process.env.ACCESS_TOKEN_EXPIRES_TIME
       );
       return res.json({
-        data: user._id,
+        userId: user._id,
         accessToken,
         refreshToken: user.refreshToken,
       });
@@ -59,7 +66,7 @@ class authController {
         process.env.ACCESS_TOKEN_EXPIRES_TIME
       );
       return res.json({
-        data: user._id,
+        userId: user._id,
         accessToken,
         refreshToken: user.refreshToken,
       });
@@ -71,6 +78,7 @@ class authController {
       return res.json(error);
     }
   }
+
   about(req, res) {
     res.json({ msg: "ping" });
   }
