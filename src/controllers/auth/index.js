@@ -16,13 +16,11 @@ class authController {
         process.env.ACCESS_SECRET_KEY,
         process.env.ACCESS_TOKEN_EXPIRES_TIME
       );
-      return res
-        .status(200)
-        .json({
-          userId: user._id,
-          accessToken,
-          refreshToken: user.refreshToken,
-        });
+      return res.status(200).json({
+        userId: user._id,
+        accessToken,
+        refreshToken: user.refreshToken,
+      });
     } catch (error) {
       console.log("error while sign up is : ", error);
       if (error?.code === 11000) {
@@ -81,6 +79,28 @@ class authController {
 
   about(req, res) {
     res.json({ msg: "ping" });
+  }
+  async getUserDetails(req, res) {
+    if (req.isAuth) {
+      const { userId } = req.body;
+      try {
+        const user = await User.findById(userId);
+        const accessToken = createToken(
+          user,
+          process.env.ACCESS_SECRET_KEY,
+          process.env.ACCESS_TOKEN_EXPIRES_TIME
+        );
+        return res.status(200).json({
+          userId: user._id,
+          accessToken,
+          refreshToken: user.refreshToken,
+        });
+      } catch (error) {
+        return res.status(400).json(error);
+      }
+    } else {
+      return res.status(403).json({ error: "Not authorized" });
+    }
   }
 }
 
