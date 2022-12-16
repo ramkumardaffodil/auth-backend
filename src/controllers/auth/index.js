@@ -3,7 +3,7 @@ import User from "../../models/User.js";
 import { createToken } from "../../utils/token.js";
 
 class authController {
-  async signUp(req, res) {
+  signUp = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !validator.isEmail(email))
       return res.json({ error: "Email is not valid" });
@@ -28,9 +28,9 @@ class authController {
       }
       return res.status(400).json(error);
     }
-  }
+  };
 
-  async signIn(req, res) {
+  signIn = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !validator.isEmail(email))
       return res.json({ error: "Email is not valid" });
@@ -52,9 +52,9 @@ class authController {
       console.log("error while sign in is : ", error);
       return res.json({ error });
     }
-  }
+  };
 
-  async getAccessToken(req, res) {
+  getAccessToken = async (req, res) => {
     const { refreshToken } = req.body;
     try {
       const user = await User.getAccessToken(refreshToken);
@@ -75,12 +75,17 @@ class authController {
       );
       return res.json(error);
     }
-  }
+  };
 
-  about(req, res) {
+  about = (req, res) => {
+    this.pong(req, res);
     res.json({ msg: "ping" });
-  }
-  async getUserDetails(req, res) {
+  };
+
+  pong = (req, res) => {
+    console.log("pong");
+  };
+  getUserDetails = async (req, res) => {
     if (req.isAuth) {
       const { userId } = req.body;
       try {
@@ -101,7 +106,7 @@ class authController {
     } else {
       return res.status(403).json({ error: "Not authorized" });
     }
-  }
+  };
 }
 
 export default authController;
