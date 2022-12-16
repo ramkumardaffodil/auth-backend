@@ -15,11 +15,11 @@ class applicationController {
         phoneNumber,
         termAndCondition,
         favouriteLanguage,
+        fatherName,
+        motherName,
         imageUrl,
       } = req.body;
-      console.log("req body", req.body);
       if (!userId) {
-        console.log(1);
         return res.status(403).json({ error: "Not authorized" });
       }
       const data = [
@@ -30,7 +30,10 @@ class applicationController {
         { name: "phoneNumber", value: phoneNumber },
         { name: "termAndCondition", value: termAndCondition },
         { name: "favouriteLanguage", value: favouriteLanguage },
+        { name: "fatherName", value: fatherName },
+        { name: "motherName", value: motherName },
       ];
+
       const emptyFields = data.filter((field) => !field.value);
       if (emptyFields[0]?.name) {
         return res
@@ -59,6 +62,8 @@ class applicationController {
           termAndCondition,
           favouriteLanguage,
           imageUrl,
+          fatherName,
+          motherName,
         };
         const application = await Application.create({
           ...applicationData,
@@ -68,7 +73,6 @@ class applicationController {
             .status(200)
             .json({ data: "application created successfully", application });
       } catch (error) {
-        console.log("error while saving application is ", error);
         if (error?.errors?.userId?.kind?.includes("ObjectId")) {
           return res.status(403).json({ error: "Not authorized" });
         }
@@ -94,7 +98,6 @@ class applicationController {
         if (error.kind.includes("ObjectId")) {
           return res.status(403).json({ error: "Not authorized" });
         }
-        console.log("Error while getting all application is", error);
         return res.status(400).json(error);
       }
     }
@@ -106,6 +109,8 @@ class applicationController {
         _id: id,
         firstName,
         lastName,
+        fatherName,
+        motherName,
         gender,
         country,
         interests,
@@ -123,6 +128,8 @@ class applicationController {
         { name: "phoneNumber", value: phoneNumber },
         { name: "termAndCondition", value: termAndCondition },
         { name: "favouriteLanguage", value: favouriteLanguage },
+        { name: "fatherName", value: fatherName },
+        { name: "motherName", value: motherName },
       ];
       const emptyFields = data.filter((field) => !field.value);
       if (emptyFields[0]?.name) {
@@ -150,6 +157,8 @@ class applicationController {
           phoneNumber,
           termAndCondition,
           favouriteLanguage,
+          fatherName,
+          motherName,
         };
         const application = await Application.findByIdAndUpdate(id, data);
         return res

@@ -22,7 +22,6 @@ class authController {
         refreshToken: user.refreshToken,
       });
     } catch (error) {
-      console.log("error while sign up is : ", error);
       if (error?.code === 11000) {
         return res.status(400).json({ error: "Email already present" });
       }
@@ -49,7 +48,6 @@ class authController {
         refreshToken: user.refreshToken,
       });
     } catch (error) {
-      console.log("error while sign in is : ", error);
       return res.json({ error });
     }
   };
@@ -78,13 +76,9 @@ class authController {
   };
 
   about = (req, res) => {
-    this.pong(req, res);
     res.json({ msg: "ping" });
   };
 
-  pong = (req, res) => {
-    console.log("pong");
-  };
   getUserDetails = async (req, res) => {
     if (req.isAuth) {
       const { userId } = req.body;

@@ -9,9 +9,7 @@ const isAuth = async (req, res, next) => {
   try {
     const isTokenValid = verifyToken(token);
     req.isAuth = true;
-    console.log("token after verify is ", isTokenValid);
   } catch (error) {
-    console.log("error while verify token is ", error);
     res.json({ error: "Malwared jwt" });
   }
   next();
